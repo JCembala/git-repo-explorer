@@ -42,5 +42,36 @@ Set the `Accept` header to `application/json` to receive the response, otherwise
 Accept: application/json
 ```
 
+## Testing
+To run the tests, use the following command:
+```shell
+./gradlew test
+```
+
+## Example
+### Request
+```
+GET /api/explore/jcembala
+Accept: application/json
+```
+
+### Response
+```json
+[
+	{
+		"name": "git-repo-explorer",
+		"owner": {
+			"login": "JCembala"
+		},
+		"branches": [
+			{
+				"name": "master",
+				"lastCommitSha": "2d0342e39c997dd38f5fe7195d17961d8fb2fbe8"
+			}
+		]
+	}
+]
+```
+
 ## License
 [Apache License 2.0](LICENSE)
