@@ -5,4 +5,4 @@ import org.jcembala.gitrepoexplorer.serializers.Owner;
 
 import java.util.List;
 
-public record RepoRecord(String name, Owner owner, List<Branch> branches) {}
+public record Repository(String name, Owner owner, List<Branch> branches) {}
