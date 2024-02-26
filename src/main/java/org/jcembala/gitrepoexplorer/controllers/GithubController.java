@@ -1,9 +1,7 @@
 package org.jcembala.gitrepoexplorer.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.jcembala.gitrepoexplorer.serializers.Branch;
-import org.jcembala.gitrepoexplorer.serializers.Repo;
-import org.jcembala.gitrepoexplorer.records.RepoRecord;
+import org.jcembala.gitrepoexplorer.records.Repository;
 import org.jcembala.gitrepoexplorer.services.GithubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,30 +25,15 @@ public class GithubController {
     }
 
     @GetMapping(value = "/explore/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGithubRepos(@PathVariable String username) {
+    public ResponseEntity<List<Repository>> getGithubRepos(@PathVariable String username) {
         try {
-            List<Repo> repos = githubService.getRepos(username);
-            List<RepoRecord> repoRecords = new ArrayList<>();
+            List<Repository> repos = githubService.repositories(username);
 
-            for (Repo repo : repos) {
-                List<Branch> branches = githubService.getBranchesForRepo(username, repo.getName());
-                repo.setBranches(branches);
-
-                RepoRecord repoRecord = new RepoRecord(repo.getName(), repo.getOwner(), repo.getBranches());
-
-
-                repoRecords.add(repoRecord);
-            }
-
-            return ResponseEntity.ok(repoRecords);
-        } catch (Exception exception) {
-            if (exception instanceof HttpClientErrorException httpException) {
-                return new ResponseEntity<>(httpException.getStatusText(), httpException.getStatusCode());
-            } else if (exception instanceof JsonProcessingException) {
-                return new ResponseEntity<>("Error processing JSON", HttpStatus.INTERNAL_SERVER_ERROR);
-            } else {
-                return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            return new ResponseEntity<>(repos, HttpStatus.OK);
+        } catch (HttpClientErrorException.NotFound e) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NOT_FOUND);
+        } catch (JsonProcessingException e) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -1,8 +1,8 @@
 package org.jcembala.gitrepoexplorer.records;
 
-import org.jcembala.gitrepoexplorer.serializers.Branch;
-import org.jcembala.gitrepoexplorer.serializers.Owner;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
-public record Repository(String name, Owner owner, List<Branch> branches) {}
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record Repository(String name, Owner owner, List<Branch> branches, boolean fork) {}
